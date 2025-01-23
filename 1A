@@ -1,0 +1,66 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype>
+#include <cmath>
+using namespace std;
+int evaluatePrefix(const string& prefix) {
+    stack<int> st;
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        if (isdigit(prefix[i])) {
+            int num = 0;
+            int base = 1;
+            while (i >= 0 && isdigit(prefix[i])) {
+                num += (prefix[i] - '0') * base;
+                base *= 10;
+                i--;
+            }
+            st.push(num);
+            i++;
+        } else {
+            int a = st.top(); st.pop();
+            int b = st.top(); st.pop();
+            switch (prefix[i]) {
+                case '+': st.push(a + b); break;
+                case '-': st.push(a - b); break;
+                case '*': st.push(a * b); break;
+                case '/': st.push(a / b); break;
+                case '^': st.push(pow(a, b)); break;
+            }
+        }
+    }return st.top();}
+string infixToPrefix(const string& infix) {
+    stack<char> operators;
+    string postfix;
+    string reversedInfix(infix.rbegin(), infix.rend());
+    for (char& c : reversedInfix) {
+        if (c == '(') c = ')';
+        else if (c == ')') c = '(';}
+    for (char c : reversedInfix) {
+        if (isdigit(c)) {
+            postfix += c;
+        } else if (c == '(') {
+            operators.push(c);
+        } else if (c == ')') {
+            while (!operators.empty() && operators.top() != '(') {
+                postfix += operators.top();
+                operators.pop();}
+            operators.pop();
+        } else {
+            while (!operators.empty() && operators.top() != '(') {
+                postfix += operators.top();
+                operators.pop();
+            }
+            operators.push(c);}}
+    while (!operators.empty()) {
+        postfix += operators.top();
+        operators.pop();}
+    return string(postfix.rbegin(), postfix.rend());
+int main() {
+    string infixExpr = "(34*2)-[{40/(4-2)}+2]";
+    string prefixExpr = infixToPrefix(infixExpr);
+    int result = evaluatePrefix(prefixExpr);
+    cout << "Infix Expression: " << infixExpr << endl;
+    cout << "Prefix Expression: " << prefixExpr << endl;
+    cout << "Result of Prefix Evaluation: " << result << endl;
+    return 0;}
