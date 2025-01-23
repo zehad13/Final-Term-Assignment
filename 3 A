@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+struct Node {
+    char data;
+    Node* left, * right;
+    Node(char val) {
+        data = val;
+        left = right = nullptr; }};
+Node* newNode(char data) {
+    Node* node = new Node(data);
+    return node;}
+int findIndex(char* arr, int start, int end, char value) {
+    for (int i = start; i <= end; i++) {
+        if (arr[i] == value) {
+            return i; } } return -1; }
+Node* buildTree(char* postOrder, char* preOrder, int postStart, int postEnd, int& preIndex) {
+    if (postStart > postEnd) return nullptr;
+    Node* root = newNode(preOrder[preIndex++]);
+    if (postStart == postEnd) return root;
+    int postIndex = findIndex(postOrder, postStart, postEnd, preOrder[preIndex]);
+    root->left = buildTree(postOrder, preOrder, postStart, postIndex, preIndex);
+    root->right = buildTree(postOrder, preOrder, postIndex + 1, postEnd - 1, preIndex);
+    return root;}
+void printInOrder(Node* root) {
+    if (root == nullptr) return;
+    printInOrder(root->left);
+    cout << root->data << " ";
+    printInOrder(root->right);}
+int main() {
+    char postOrder[] = { 'A', 'B', 'D', 'G', 'K', 'H', 'L', 'M', 'C', 'E' };
+    char preOrder[] = { 'K', 'G', 'L', 'M', 'H', 'D', 'B', 'E', 'C', 'A' };
+    int size = sizeof(postOrder) / sizeof(postOrder[0]);
+    int preIndex = 0;
+    Node* root = buildTree(postOrder, preOrder, 0, size - 1, preIndex);
+    cout << "In Order Traversal: ";
+    printInOrder(root);
+    cout << endl;
+    return 0;}
+
