@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+struct TreeNode {
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}};
+struct ListNode {
+    int value;
+    ListNode* next;
+    ListNode(int val) : value(val), next(nullptr) {}};
+ListNode* findMiddle(ListNode* start, ListNode* end) {
+    ListNode* slow = start;
+    ListNode* fast = start;
+    while (fast != end && fast->next != end) {
+        slow = slow->next;
+        fast = fast->next->next;}
+    return slow;}
+TreeNode* createBalancedTree(ListNode* start, ListNode* end) {
+    if (start == end) return nullptr;
+    ListNode* mid = findMiddle(start, end);
+    TreeNode* root = new TreeNode(mid->value);
+    root->left = createBalancedTree(start, mid);
+    root->right = createBalancedTree(mid->next, end);
+    return root;}
+void printInorder(TreeNode* root) {
+    if (!root) return;
+    printInorder(root->left);
+    cout << root->value << " ";
+    printInorder(root->right);}
+int main() {
+    ListNode* head = new ListNode(10);
+    head->next = new ListNode(20);
+    head->next->next = new ListNode(30);
+    head->next->next->next = new ListNode(40);
+    head->next->next->next->next = new ListNode(50);
+    head->next->next->next->next->next = new ListNode(60);
+    TreeNode* root = createBalancedTree(head, nullptr);
+    cout << "Inorder traversal of the balanced binary tree: ";
+    printInorder(root);
+    cout << endl;
+    return 0;
+}
