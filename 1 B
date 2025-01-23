@@ -1,0 +1,74 @@
+#include <iostream>
+using namespace std;
+struct Node {
+    int data;
+    Node* next;
+};
+class Queue {
+    Node *front, *rear;
+public:
+    Queue() {
+        front = rear = nullptr; }
+    void enqueue(int data) {
+        Node* temp = new Node();
+        temp->data = data;
+        temp->next = nullptr;
+        if (rear == nullptr) {
+            front = rear = temp;
+            return;}
+        rear->next = temp;
+        rear = temp;}
+    int dequeue() {
+        if (front == nullptr) {
+            cout << "Queue is empty!" << endl;
+            return -1;}
+        int data = front->data;
+        Node* temp = front;
+        front = front->next;
+        if (front == nullptr) {
+            rear = nullptr;}
+        delete temp;
+        return data;}
+    void reverseQueueUtil(Node* current) {
+        if (current == nullptr) {
+            return;}
+        Node* temp = current->next;
+        if (temp == nullptr) {
+            front = rear = current;
+            return;}
+        current->next = nullptr;
+        reverseQueueUtil(temp);
+        rear->next = current;
+        rear = current; }
+    void reverseQueue() {
+        if (front != nullptr) {
+            reverseQueueUtil(front);} }
+    void printFrontToRear() {
+        Node* temp = front;
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->next;}
+        cout << endl;}
+    void printRearToFrontUtil(Node* current) {
+        if (current == nullptr) {
+            return;  }
+        printRearToFrontUtil(current->next);
+        cout << current->data << " ";}
+    void printRearToFront() {
+        printRearToFrontUtil(front);
+        cout << endl;}};
+int main() {
+    Queue q;
+    q.enqueue(1);
+    q.enqueue(2);
+    q.enqueue(3);
+    q.enqueue(4);
+    q.enqueue(5);
+    cout << "Queue from Front to Rear: ";
+    q.printFrontToRear();
+    q.reverseQueue();
+    cout << "Queue after reversing - Front to Rear: ";
+    q.printFrontToRear();
+    cout << "Queue after reversing - Rear to Front: ";
+    q.printRearToFront();
+    return 0;}
